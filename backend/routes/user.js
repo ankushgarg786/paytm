@@ -37,16 +37,16 @@ router.post("/signup", async (req, res) => {
     lastName: req.body.lastName,
     password: req.body.password,
   });
-  const newUserId = newUser._id;
+  const userId = newUser._id;
 
   await Account.create({
-    userId: newUserId,
-    balance: 1 + Math.random() * 10000,
+    userId: userId,
+    balance: Number((Math.random() * (10000 - 200) + 200).toFixed(2)),
   });
 
   const token = jwt.sign(
     {
-      newUserId,
+      userId,
     },
     JWT_SECRET
   );
@@ -60,7 +60,7 @@ const singinSchema = zod.object({
   username: zod.string().email(),
   password: zod.string(),
 });
-router.get("/signin", async (req, res) => {
+router.post("/signin", async (req, res) => {
   const { success } = singinSchema.safeParse(req.body);
   if (!success) {
     return res.status(411).json({
